@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Vocal Removal</string>
+    <string name="audio_file_info">Audio File Info</string>
+</resources>
