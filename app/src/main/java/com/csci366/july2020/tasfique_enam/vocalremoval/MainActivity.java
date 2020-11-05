@@ -64,16 +64,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 continuePlaying = true;
-                short[] filteredSamples = new short[mNumSamples];
-                for(int i = 14; i < filteredSamples.length; i++) {
-                    filteredSamples[i] = (short)((audioSamples[i] + audioSamples[i-1] + audioSamples[i-2] + audioSamples[i-3] + audioSamples[i-4] + audioSamples[i-5] + audioSamples[i-6] + audioSamples[i-7] + audioSamples[i-8] + audioSamples[i-9] +
-                            audioSamples[i-10] + audioSamples[i-11] + audioSamples[i-12] + audioSamples[i-13] + audioSamples[i-14]) / 15);
+
+                short[] DeVocal = new short[mNumSamples];
+                for (int i = 0; i<mNumSamples; i += 4) {
+                    DeVocal[i] = (short)(audioSamples[i] - audioSamples[i+1]);
+                    DeVocal[i+1] = (short)(audioSamples[i] - audioSamples[i+1]);
+                    DeVocal[i+2] = (short)(audioSamples[i+2] - audioSamples[i+3]);
+                    DeVocal[i+3] = (short)(audioSamples[i+2] - audioSamples[i+3]);
                 }
 
                 // Allocate ShortBuffer
                 mSamples = ShortBuffer.allocate(mNumSamples);
-                // put audio samples to ShortBuffer
-                mSamples.put(filteredSamples);
+                // put data to ShortBuffer
+                mSamples.put(DeVocal);
                 playAudio();
             }
         });
@@ -187,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
     private short[] readWavData() {
         // read WAV file
-        InputStream in = getApplicationContext().getResources().openRawResource(R.raw.audio1);
+        InputStream in = getApplicationContext().getResources().openRawResource(R.raw.audio2);
         LoadWav loadWav = new LoadWav();
         int numOfChannels, samplingRate, numOfSamples;
         float lengthInSecond;
@@ -241,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                 AudioTrack audioTrack = new AudioTrack(
                         AudioManager.STREAM_MUSIC,
                         mWavInfo.spec.getRate(),
-                        AudioFormat.CHANNEL_OUT_MONO,
+                        AudioFormat.CHANNEL_OUT_STEREO,
                         AudioFormat.ENCODING_PCM_16BIT,
                         bufferSize,
                         AudioTrack.MODE_STREAM);
